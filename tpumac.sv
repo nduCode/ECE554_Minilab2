@@ -14,12 +14,16 @@ module tpumac
 // NOTE: added register enable in v1.1
 // Also, Modelsim prefers "reg signed" over "signed reg"
 
+	logic signed [BITS_C-1:0] C_calc_mult, C_calc_add; // Multiplier and Adder output 
+	logic signed [BITS_C-1:0] C_sel; // Cin or Adder output
+
+	
 
 	
 	// enabled Register A
 	register #(BUS_WIDTH = BITS_AB) REG8_A (.clk(clk),
 																					.rst_n(rst_n),
-																					.d(d),
+																					.d(Ain),
 																					.en(en),
 																					.q(Aout)
 																				 );
@@ -27,16 +31,25 @@ module tpumac
 	// enabled Register B																	 
 	register #(BUS_WIDTH = BITS_AB) REG8_B  ( .clk(clk),
 																						.rst_n(rst_n),
-																						.d(d),
+																						.d(Bin),
 																						.en(en),
 																						.q(Bout)
 																					 );
 																					 
+	
+	// Multiplication block
+	assign C_calc_mult = Ain * Bin;
+	
+	// Addition Block
+	assign C_calc_add = C_calc_mult + Cout;
+			
+	// 16-bit Register selected value
+	assign C_sel = WrEn ? Cin : C_calc_add;
 																					 
 	// enabled Register C																				 																	 
 	register #(BUS_WIDTH = BITS_C) REG16_C  (  .clk(clk),
 																						.rst_n(rst_n),
-																						.d(d),
+																						.d(C_sel),
 																						.en(en),
 																						.q(Cout)
 																					 );

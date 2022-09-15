@@ -1,0 +1,21 @@
+{//Mac/Home/Documents/Fall 2022/ECE 554/Minilab 2/ECE554_Minilab2/dff.sv} {1 {vlog -work work -vopt -sv -stats=none {//Mac/Home/Documents/Fall 2022/ECE 554/Minilab 2/ECE554_Minilab2/dff.sv}
+Model Technology ModelSim SE-64 vlog 10.6d Compiler 2018.02 Feb 24 2018
+-- Compiling module dff
+
+Top level modules:
+	dff
+
+} {} {}} {//Mac/Home/Documents/Fall 2022/ECE 554/Minilab 2/ECE554_Minilab2/register.sv} {0 {vlog -work work -vopt -sv -stats=none {//Mac/Home/Documents/Fall 2022/ECE 554/Minilab 2/ECE554_Minilab2/register.sv}
+Model Technology ModelSim SE-64 vlog 10.6d Compiler 2018.02 Feb 24 2018
+-- Compiling module register
+** Error: (vlog-13069) //Mac/Home/Documents/Fall 2022/ECE 554/Minilab 2/ECE554_Minilab2/register.sv(17): near "[": syntax error, unexpected '['.
+** Error: //Mac/Home/Documents/Fall 2022/ECE 554/Minilab 2/ECE554_Minilab2/register.sv(17): (vlog-13205) Syntax error found in the scope following 'dff_en'. Is there a missing '::'?
+
+} {4.0 6.0} {}} {//Mac/Home/Documents/Fall 2022/ECE 554/Minilab 2/ECE554_Minilab2/tpumac.sv} {0 {vlog -work work -vopt -sv -stats=none {//Mac/Home/Documents/Fall 2022/ECE 554/Minilab 2/ECE554_Minilab2/tpumac.sv}
+Model Technology ModelSim SE-64 vlog 10.6d Compiler 2018.02 Feb 24 2018
+-- Compiling module tpumac
+** Error: (vlog-13069) //Mac/Home/Documents/Fall 2022/ECE 554/Minilab 2/ECE554_Minilab2/tpumac.sv(24): near "=": syntax error, unexpected '=', expecting ++ or --.
+** Error: (vlog-13069) //Mac/Home/Documents/Fall 2022/ECE 554/Minilab 2/ECE554_Minilab2/tpumac.sv(32): near "=": syntax error, unexpected '=', expecting ++ or --.
+** Error: (vlog-13069) //Mac/Home/Documents/Fall 2022/ECE 554/Minilab 2/ECE554_Minilab2/tpumac.sv(50): near "=": syntax error, unexpected '=', expecting ++ or --.
+
+} {4.0 7.0} {}}

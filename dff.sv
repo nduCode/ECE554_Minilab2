@@ -5,9 +5,9 @@ module dff(
 	// Input
 	input clk,
 	input rst_n,
-	input d,
+	input logic signed d,
 	// Output
-	output q
+	output logic signed q
 	); 
 
 	always @(posedge clk, negedge rst_n) 

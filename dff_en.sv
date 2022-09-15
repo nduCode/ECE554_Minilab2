@@ -5,10 +5,10 @@ module dff_en(
 	// Input
 	input clk,
 	input rst_n,
-	input d,
-	input en, // enable signal for flip flop
+	input logic signed d,
+	input logic en, // enable signal for flip flop
 	// Output
-	output q
+	output logic signed q
 	); 
 	
 	assign d_en = en ? d : q;

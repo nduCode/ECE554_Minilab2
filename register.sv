@@ -7,10 +7,10 @@ module register
 	// Input
 	input clk,
 	input rst_n,
-	input d,
+	input logic signed [BUS_WIDTH - 1: 0] d,
 	input en, // enable signal for flip flop
 	// Output
-	output q
+	output logic signed [BUS_WIDTH - 1: 0] q
 	); 
 	
 	// enabled DFF arrays
