@@ -14,10 +14,10 @@ module register
 	); 
 	
 	// enabled DFF arrays
-	dff_en [BUS_WIDTH - 1: 0] DFF1 ( .clk(clk),
-																	.rst_n(rst_n),
-																	.d(d),
-																	.en(en),
-																	.q(q)
-																 );
+	dff_en DFF1 [BUS_WIDTH - 1: 0] ( .clk(clk),
+									.rst_n(rst_n),
+									.d(d),
+									.en(en),
+									.q(q)
+									);
 endmodule
