@@ -21,7 +21,7 @@ module tpumac
 
 	
 	// enabled Register A
-	register #(BUS_WIDTH = BITS_AB) REG8_A (.clk(clk),
+	register #(.BUS_WIDTH(BITS_AB)) REG8_A (.clk(clk),
 																					.rst_n(rst_n),
 																					.d(Ain),
 																					.en(en),
@@ -29,7 +29,7 @@ module tpumac
 																				 );
 																		 
 	// enabled Register B																	 
-	register #(BUS_WIDTH = BITS_AB) REG8_B  ( .clk(clk),
+	register #(.BUS_WIDTH(BITS_AB)) REG8_B  ( .clk(clk),
 																						.rst_n(rst_n),
 																						.d(Bin),
 																						.en(en),
@@ -47,7 +47,7 @@ module tpumac
 	assign C_sel = WrEn ? Cin : C_calc_add;
 																					 
 	// enabled Register C																				 																	 
-	register #(BUS_WIDTH = BITS_C) REG16_C  (  .clk(clk),
+	register #(.BUS_WIDTH(BITS_C)) REG16_C  (  .clk(clk),
 																						.rst_n(rst_n),
 																						.d(C_sel),
 																						.en(en),
