@@ -1,2 +1,5 @@
 # Ignoring Modelsim folders
 /work
+# Project Files
+*.mpi
+*.mpf
