@@ -18,6 +18,7 @@ module tpumac_tb();
 	logic signed [BITS_AB-1:0] Btest, Bin_extra; // can be random or high Z for tests 3-7
 	logic signed [BITS_C-1:0] Ctest, Cin_extra;; // can be random or high Z for tests 3-7
 	integer i;
+	integer test_status; // 1 if passed all tests, else 0
 	integer cntr; // holds the number of accumulations to be made before exiting
 	// Testing Enumeration
 	typedef enum {TEST0 = 0, TEST1, TEST2, TEST3, TEST4, TEST5, TEST6, TEST7, BADTEST = -1} test_value; // integer
@@ -49,7 +50,7 @@ module tpumac_tb();
 		Ain_extra = {BITS_AB{1'b0}};
 		Bin_extra = {BITS_AB{1'b0}};
 		Cin_extra = {BITS_C{1'b0}};
-		
+		test_status = 1; // if 1 at the end then passed
 		
 
 		// Reset 
@@ -65,72 +66,87 @@ module tpumac_tb();
 
 		// Check mac computation
 		for(i = 0; i < 8; i = i + 1) begin
-				// Initialize variables at neg clk edge
-				@(negedge clk) begin
-					curr_test = (i === 0) ? curr_test.first() : curr_test.next(); // [0-7]
-					{Ain_extra, Bin_extra} = $random; // for tests 3-7
-					Atest = Ain;
-					Btest = Bin;
-					Ctest = Cin;
-					en = 1'b1; // enable registers (register initialization)
-					WrEn = 1'b1; // Assert register write enable
-					cntr = $urandom_range(15, 1); // maximum of 15, min:1 accumulations in test 3-7
+			// Initialize variables at neg clk edge
+			@(negedge clk) begin
+				curr_test = (i === 0) ? curr_test.first() : curr_test.next(); // [0-7]
+				{Ain_extra, Bin_extra, Cin_extra} = $random; // for tests 3-7
+				Atest = Ain_extra;
+				Btest = Bin_extra;
+				Ctest = Cin_extra;
+				en = 1'b1; // enable registers (register initialization)
+				WrEn = 1'b1; // Assert register write enable
+				cntr = $urandom_range(15, 1); // maximum of 15, min:1 accumulations in test 3-7
+			end
+			
+			@(negedge clk) begin  
+				en = 1'b0; // disable enable signal
+				WrEn = 1'b0; // disable result register
+				{Ain_extra, Bin_extra} = {{BITS_AB{1'bx}}, {BITS_AB{1'bx}}}; // all x's
+				Cin_extra = {BITS_C{1'bx}};
+			end
+			
+			@(negedge clk) begin
+				// TESTA: Check Register stored correctly (and register holds value past clk high en)
+				if(Atest !== Aout || Btest !== Bout || Ctest !== Cout) begin
+					test_status = 0;
+					$display("Error @ %t: Values were not stored in register", $time);
 				end
 				
-				@(negedge clk) begin  
-					en = 1'b0; // disable enable signal
-					WrEn = 1'b0; // disable result register
-					{Ain_extra, Bin_extra} = {{BITS_AB{1'bx}}, {BITS_AB{1'bx}}}; // all x's
-					Cin_extra = {BITS_C{1'bx}};
-				end
+				// TESTA1: Tests that computation is done with Ain and Bin not Aout and Bout
+				// Random 
+				Ain_extra = $random;
+				Bin_extra = $random;
+				// Update test values
+				Atest = Ain_extra;
+				Btest = Bin_extra;
+						
+				// Update Ctest to store result of the computation
+				Ctest = (Atest * Btest) + Ctest;
 				
+				// Enable computation
+				en = 1'b1;
+			end
+					
+			do begin
 				@(negedge clk) begin
-					// TESTA: Check Register stored correctly (and register holds value past clk high en)
-					if(Atest !== Aout || Btest !== Bout || Ctest !== Cout)
-							$display("Error @ %t: Values were not stored in register", $time);
+					// TESTB: Check operation computed correctly
+					if(Cout !== Ctest) begin
+						test_status = 0;
+						$display("Error @ %t: Result not computed correctly", $time);
+					end
 					
-					
-					// TESTA1: Tests that computation is done with Ain and Bin not Aout and Bout
+					// Disable computation
+					en = 1'b0;
+				end
+						
+				@(negedge clk) begin
+					en = 1'b1; // enable for A and B inputs
 					// Random 
 					Ain_extra = $random;
 					Bin_extra = $random;
 					// Update test values
-					Atest = Ain;
-					Btest = Bin;
-							
-					// Update Ctest to store result of the computation
+					Atest = Ain_extra;
+					Btest = Bin_extra;
 					Ctest = (Atest * Btest) + Ctest;
-					
-					// Enable computation
-					en = 1'b1;
 				end
-						
-				do begin
-					@(negedge clk) begin
-						// TESTB: Check operation computed correctly
-						if(Cout !== Ctest)
-								$display("Error @ %t: Result not computed correctly", $time);
-						
-						// Disable computation
-						en = 1'b0;
-					end
-							
-					@(negedge clk) begin
-						en = 1'b1; // enable for A and B inputs
-						// Random 
-						Ain_extra = $random;
-						Bin_extra = $random;
-						// Update test values
-						Atest = Ain;
-						Btest = Bin;
-						Ctest = (Atest * Btest) + Ctest;
-					end
-					
-					// Update counter
-					cntr = cntr - 1;
-					if(cntr === 0) break; // exit loop	
-				end while(curr_test >= TEST3);
+				
+				// Update counter
+				cntr = cntr - 1;
+				if(cntr === 0) break; // exit loop	
+			end while(curr_test >= TEST3);
+			
+			// Disable enable
+			en = 1'b0;
 		end	
+		
+		if(test_status) 
+			$display("Mission Successful!: Passed all tests!!!");
+		else
+			$display("Mission Failed: Look through code for error points!");
+		
+		// Stop simulation
+		$stop;
+		
 	end
 
 	// Constantly assign values to Ain, Bin and Cin
