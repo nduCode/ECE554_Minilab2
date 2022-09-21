@@ -50,7 +50,7 @@ module tpumac
 	register #(.BUS_WIDTH(BITS_C)) REG16_C  (  .clk(clk),
 																						.rst_n(rst_n),
 																						.d(C_sel),
-																						.en(en),
+																						.en(en | WrEn),
 																						.q(Cout)
 																					 );
 
